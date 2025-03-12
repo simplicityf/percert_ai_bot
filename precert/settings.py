@@ -24,7 +24,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = os.getenv("DEBUG", "False")
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = "/"
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["percert-ai-bot.onrender.com", "*"]
 
 # APPEND_SLASH=False
 
