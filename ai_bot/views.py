@@ -4,6 +4,7 @@ from openai import OpenAI
 from django.contrib.auth.decorators import login_required
 import os
 import re
+from .keyword_mapping import keyword_mapping
 
 # API Details
 HOSTED_QA_API = os.getenv("HOSTED_QA_API")
@@ -18,27 +19,6 @@ client = OpenAI(
 chat_history = []
 
 # Keyword Mapping
-keyword_mapping = {
-    "undergraduate courses": ["undergraduate", "courses", "bachelor", "degree"],
-    "postgraduate courses": ["postgraduate", "master", "phd", "courses", "programs"],
-    "diploma courses": ["diploma", "certificate", "short courses"],
-    "undergraduate admission requirements": ["undergraduate", "admission", "requirements", "jamb", "post-utme"],
-    "direct entry admission requirements": ["direct entry", "admission", "ond", "hnd", "nce"],
-    "postgraduate admission requirements": ["postgraduate", "admission", "requirements", "masters", "phd"],
-    "course durations": ["course duration", "length", "years", "study period"],
-    "research centers and institutes": ["research", "centers", "institutes", "labs"],
-    "accreditation status": ["accreditation", "approved", "courses", "certification"],
-    "notable faculty members": ["faculty", "professors", "lecturers", "staff"],
-    "university fees": ["fees", "tuition", "cost", "payment", "charges"],
-    "undergraduate fees": ["undergraduate", "tuition", "fees", "bachelor", "cost"],
-    "postgraduate fees": ["postgraduate", "tuition", "fees", "master", "phd", "payment"],
-    "acceptance fee": ["acceptance", "fee", "new students", "admission"],
-    "other charges": ["charges", "health fee", "ict fee", "library", "sports", "departmental fees"],
-    "payment guidelines": ["payment", "portal", "deadline", "method"],
-    "scholarships": ["scholarships", "financial aid", "merit-based", "need-based"],
-    "course materials cost": ["course materials", "books", "resources", "study materials", "cost"]
-}
-
 def fetch_hosted_answer(question):
     """Fetch an answer from the hosted Q&A API and format it properly."""
     try:
@@ -56,13 +36,10 @@ def format_nested_answer(answer):
     """Format nested dictionaries and lists into a readable HTML-friendly string."""
     if isinstance(answer, str):
         return re.sub(r"\*\*(.*?)\*\*", r"\1", answer)  # Removes ** but keeps text
-
     elif isinstance(answer, list):
         return "\n".join(format_nested_answer(item) if not isinstance(item, dict) else format_nested_answer(item) for item in answer)
-
     elif isinstance(answer, dict):
         return "\n".join(f"{key}: {format_nested_answer(value)}" for key, value in answer.items())
-
     return str(answer)
 
 
@@ -79,11 +56,17 @@ def search_google(query, site=None):
                for item in data.get("items", [])[:3]]
     return "\n".join(results) if results else "No relevant information found."
 
+
 def match_keywords(question):
     """Find the best matching keyword category for a given question."""
+    question = question.lower()
     for category, keywords in keyword_mapping.items():
-        if any(keyword in question.lower() for keyword in keywords):
-            return category
+        for keyword in keywords:
+            # Remove trailing 's' if it exists to cover both singular and plural forms.
+            base_keyword = keyword.lower().rstrip('s')
+            pattern = rf"\b{re.escape(base_keyword)}s?\b"
+            if re.search(pattern, question, re.IGNORECASE):
+                return category
     return None
 
 @login_required
@@ -105,7 +88,12 @@ def chat(request):
                 # Keyword-based matching
                 matched_category = match_keywords(user_message)
                 if matched_category:
-                    ai_message = f"[🔎 Keyword Match: {matched_category}]\n{fetch_hosted_answer(matched_category) or 'No direct answer found.'}"
+                    hosted_answer = fetch_hosted_answer(matched_category)
+                    
+                    if hosted_answer:
+                        ai_message = f"[📌 Answer from Knowledge Base:]\n{hosted_answer}"
+                    else:
+                        ai_message = f"[🔎 Keyword Match: {matched_category}]\nNo direct answer found."
                 else:
                     # Google Search fallback
                     google_results = search_google(user_message, site="ui.edu.ng") if "university of ibadan" in user_message.lower() else search_google(user_message)
