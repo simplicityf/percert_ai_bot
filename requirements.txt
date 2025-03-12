@@ -1,0 +1,5 @@
+Django
+requests
+openai
+decouple
+gunicorn
