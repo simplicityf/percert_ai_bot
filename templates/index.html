@@ -17,7 +17,7 @@
 {% block content %}
     <h1>Ask a Question, {{ username }} </h1>
    <p id="left"> <a href="/logout/"> Logout </a> <p>
-    <form action="/ai/" method="post">
+    <form action="{% url 'home' %}" method="post">
         {% csrf_token %}
         <label for="question">Your Question:</label>
         <input type="text" id="question" name="question" required>

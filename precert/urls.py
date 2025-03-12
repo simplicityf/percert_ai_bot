@@ -23,7 +23,6 @@ urlpatterns = [
     path('login/', home_views.login_page, name='login'),
     path('', ai_views.chat, name='home'),
     path('logout/', home_views.logout_page),
-    path('ai/', ai_views.chat),
     path('register/', home_views.register_page, name='register'),
     path('admin/', admin.site.urls),
 ]
