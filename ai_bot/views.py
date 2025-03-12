@@ -7,7 +7,7 @@ import re
 from .keyword_mapping import keyword_mapping
 
 # API Details
-HOSTED_QA_API = os.getenv("HOSTED_QA_API")
+HOSTED_QA_API = "https://ui-data.onrender.com/search"
 API_KEY = os.getenv("API_KEY")
 CSE_ID = os.getenv("CSE_ID")
 
