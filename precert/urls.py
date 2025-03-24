@@ -17,12 +17,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from home import views as home_views
-from ai_bot import views as ai_views
 
 urlpatterns = [
-    path('login/', home_views.login_page, name='login'),
-    path('', ai_views.chat, name='home'),
-    path('logout/', home_views.logout_page),
-    path('register/', home_views.register_page, name='register'),
+    path('', home_views.HomeAPIView.as_view(), name='home'),
+    path('login', home_views.LoginAPIView.as_view(), name='login'),
+    path('verify-email', home_views.VerifyOTPAPIView.as_view(), name='verify-email'),
+    path('profile', home_views.ProfileAPIView.as_view(), name='profile'),
+    path('profile/update', home_views.UpdateProfileAPIView.as_view(), name='update-profile'),
+    path('logout', home_views.LogoutAPIView.as_view(), name='logout'),
+    path('register', home_views.RegisterAPIView.as_view(), name='register'),
     path('admin/', admin.site.urls),
 ]

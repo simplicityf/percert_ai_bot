@@ -48,3 +48,32 @@ Responses are displayed in a chatbox, formatted for readability.
 🚀 Improve AI understanding & accuracy for better responses.
 🚀 Implement database storage for more structured university data.
 
+# Get started with integration
+**To register user**
+
+```GET: http://127.0.0.1:8000``` (Home Page, It requires signing in)
+
+```POST: http://127.0.0.1:8000/register```
+data_to_send: {
+    "username": "username",
+    "email": "example@mail.com",
+    "password": "pass!52"
+}
+successful response: {
+    "message": "Registration successful. An OTP has been sent to your email for verification."
+}
+
+```POST: http://127.0.0.1:8000/verify-email```
+data_to_send: {"otp": "otpcode"}
+success_response: {"message": "Email verification successful. Your account is now active."}
+
+```POST http://127.0.0.1:8000/login```
+data_to_send: {"username": "username", "password": "password"}
+success_response: {"message": "Login Successful."}
+
+```GET: http://127.0.0.1:8000/profile```
+success_response: {"id": id, "username": "username", "email": "example@mail.com"}
+
+```POST: 
+
+```POST: http://127.0.0.1:8000/logout```

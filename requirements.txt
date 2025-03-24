@@ -3,3 +3,4 @@ requests
 openai
 dotenv
 gunicorn
+djangorestframework
