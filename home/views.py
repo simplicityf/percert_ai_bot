@@ -7,8 +7,22 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from .serializer import UserProfileSerializer
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
 
 User = get_user_model()
+
+class CustomLoginAPIView(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data,
+                                           context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({
+            'token': token.key,
+            'message': f'You are successfully logged in as {user.username}'
+        })
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -76,7 +90,7 @@ def profile(request):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-@api_view(['PUT'])
+@api_view(['POST'])
 def update_profile(request):
     '''Update profile request'''
     user = request.user

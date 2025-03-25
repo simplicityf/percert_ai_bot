@@ -69,12 +69,26 @@ success_response: {"message": "Email verification successful. Your account is no
 
 ```POST http://127.0.0.1:8000/login```
 data_to_send: {"username": "username", "password": "password"}
-success_response: {"refresh_token": "", "access_token": ""}
-**Save access_token on headers:  Authorization Bearer access_token**
+success_response: {"token": "", "message": "You are successfully logged in as {{username}}"}
+**Save access_token on headers:  Authorization Token access_token**
 
 ```GET: http://127.0.0.1:8000/profile```
 success_response: {"id": id, "username": "username", "email": "example@mail.com"}
 
-```POST: 
+<!-- Update Pofile Note: If user change email, email verification will be sent-->
+```POST: http://127.0.0.1:8000/profile/update" ```
+data to send {"username": "username", "email": "email@example.com"}
+successful_response: {
+    "id": id,
+    "username": "username",
+    "email": "mail@example.com"
+}
+
+<!-- To verify change of email OTP -->
+``` http://127.0.0.1:8000/profile/verify-email-update ```
+data_to_send: {"otp": "otpcode"}
+success_response: {
+    "message": "Email updated successfully."
+}
 
 ```POST: http://127.0.0.1:8000/logout```
