@@ -91,4 +91,28 @@ success_response: {
     "message": "Email updated successfully."
 }
 
+<!-- Change password (User need to be authenticated) -->
+```POST: http://127.0.0.1:8000/change-password ``` **(Note: no data to be sent)**
+success_response: { "message": "OTP sent to your email." }
+<!-- To verify change password OTP -->
+```POST: http://127.0.0.1:8000/verify-change-password```
+data_to_send: { "otp" : "otpcode", "new_password": "password" }
+success_response: { "message": "Password changed successfully." }
+
+
+<!-- Forgot Password (Does not requires authentication) -->
+``` POST http://127.0.0.1:8000/forgot-password ```
+data_to_send: {"email": "email@example.com"}
+suceess_response: {"message": "OTP sent to your email."}
+
+``` POST http://127.0.0.1:8000/verify-forgot-password ```
+data_to_send: {
+    "email": "mail@example.com",
+    "otp": "otp code",
+    "new_password": "new password"
+}
+
+success_response: { "message": "Password reset successfully." }
+
 ```POST: http://127.0.0.1:8000/logout```
+success_response: {"message": "Logged out successfully."}

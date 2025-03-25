@@ -83,6 +83,7 @@ def verify_registration(request):
 
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def profile(request):
     '''Get user pofile, return username and email'''
 
@@ -91,6 +92,7 @@ def profile(request):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def update_profile(request):
     '''Update profile request'''
     user = request.user
@@ -227,11 +229,18 @@ def verify_change_password(request):
 
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def home(request):
     '''Home page endpoint'''
     return Response({"message": f"Welcome, {request.user.username}!"}, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def logout_view(request):
     ''' Deleting access token'''
-    return Response({"message": "Logout endpoint. Remove token client-side."}, status=status.HTTP_200_OK)
+    try:
+        token = Token.objects.get(user=request.user)
+        token.delete()
+        return Response({"message": "Logged out successfully."}, status=status.HTTP_200_OK)
+    except Token.DoesNotExist:
+        return Response({"error": "Token not found."}, status=status.HTTP_400_BAD_REQUEST)
