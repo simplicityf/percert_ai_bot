@@ -69,7 +69,8 @@ success_response: {"message": "Email verification successful. Your account is no
 
 ```POST http://127.0.0.1:8000/login```
 data_to_send: {"username": "username", "password": "password"}
-success_response: {"message": "Login Successful."}
+success_response: {"refresh_token": "", "access_token": ""}
+**Save access_token on headers:  Authorization Bearer access_token**
 
 ```GET: http://127.0.0.1:8000/profile```
 success_response: {"id": id, "username": "username", "email": "example@mail.com"}
