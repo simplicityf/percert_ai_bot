@@ -68,7 +68,7 @@ data_to_send: {"otp": "otpcode"}
 success_response: {"message": "Email verification successful. Your account is now active."}
 
 ```POST http://127.0.0.1:8000/login```
-data_to_send: {"username": "username", "password": "password"}
+data_to_send: {"email": "email@example.com", "password": "password"}
 success_response: {"token": "", "message": "You are successfully logged in as {{username}}"}
 **Save access_token on headers:  Authorization Token access_token**
 
@@ -114,5 +114,40 @@ data_to_send: {
 
 success_response: { "message": "Password reset successfully." }
 
+
 ```POST: http://127.0.0.1:8000/logout```
 success_response: {"message": "Logged out successfully."}
+
+<!-- For saving chats between users and bot -->
+```POST: http://127.0.0.1:8000/chat ```
+data_to_send: {
+    "user_question": "Tell me about University of Ibadan",
+    "bot_response": "Uni Ibadan is a great place to school at"
+}
+
+success_response: {
+    "id": chatit,
+    "user": userid,
+    "user_question": "Tell me about University of Ibadan",
+    "bot_response": "Uni Ibadan is a great place to school at",
+    "timestamp": "2025-03-27T14:40:54.453622Z"
+}
+
+<!-- To get chat history -->
+``` GET http://127.0.0.1:8000/chat ```
+[
+    {
+        "id": chatid,
+        "user": userid,
+        "user_question": "Hey are you there?",
+        "bot_response": "Yes I am, how can i be of help today?",
+        "timestamp": "2025-03-27T14:39:33.579606Z"
+    },
+    {
+        "id": chatid,
+        "user": userid,
+        "user_question": "Tell me about University of Ibadan",
+        "bot_response": "Uni Ibadan is a great place to school at",
+        "timestamp": "2025-03-27T14:40:54.453622Z"
+    }
+]
